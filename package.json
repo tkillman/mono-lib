@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "resolutions": {
+    "@typescript-eslint/typescript-estree": "7.2.0",
+    "mute-stream": "1.0.0",
+    "@typescript-eslint/utils": "7.2.0",
+    "espree": "9.6.0",
+    "vite": "6.3.5"
+  },
+  "devDependencies": {
+    "vite": "6.3.5",
+    "concurrently": "^7.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently \"cd ./packages/playground && yarn dev\" \"cd ./packages/mock-gui && yarn css:build\"",
+    "build:lib": "cd ./packages/mock-gui && yarn build",
+    "build:ui": "cd ./packages/playground && yarn build",
+    "build:all": "cd ./packages/mock-gui && yarn build && cd ../playground && yarn build"
+  }
+}
