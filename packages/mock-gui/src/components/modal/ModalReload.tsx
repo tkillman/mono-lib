@@ -1,17 +1,6 @@
-import { Modal, ModalBody, Progress } from 'flowbite-react';
-import { useEffect, useRef, useState, type FC } from 'react';
-
-interface IProps {
-  openModal: boolean;
-  setOpenModal: (open: boolean) => void;
-  handleConfirm?: () => void;
-}
-
-export const defaultModalReoladProps: IProps = {
-  openModal: false,
-  setOpenModal: () => {},
-  handleConfirm: undefined,
-};
+import { Modal, ModalBody, Progress } from "flowbite-react";
+import { useEffect, useRef, useState, type FC } from "react";
+import type { IProps } from "./modalReloadProps";
 
 const ModalReload: FC<IProps> = ({
   openModal,
@@ -50,14 +39,14 @@ const ModalReload: FC<IProps> = ({
       handleConfirm?.();
       window.location.reload(); // Reload the page when percent reaches 100
     }
-  }, [percentNum]);
+  }, [percentNum, handleConfirm]);
 
   const onClose = () => {
     setPercentNum(0); // Reset percent when modal closes
     if (refInterval.current) {
       clearInterval(refInterval.current);
     } // Cleanup on unmount
-    setOpenModal(false);
+    setOpenModal?.(false);
   };
 
   return (

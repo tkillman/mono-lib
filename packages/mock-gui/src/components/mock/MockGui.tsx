@@ -1,21 +1,16 @@
-import { useEffect, useState, type FC } from 'react';
-import {
-  Button,
-  ToggleSwitch,
-  TextInput,
-  Select,
-  Progress,
-} from 'flowbite-react';
+import { useEffect, useState, type FC } from "react";
+import { Button, ToggleSwitch, TextInput, Select } from "flowbite-react";
 
-import ModalReload, { defaultModalReoladProps } from '../modal/ModalReload';
+import ModalReload from "../modal/ModalReload";
 import {
   useMockGuiStore,
   useMockApiStore,
   useMockApiOnOffStore,
-} from '../../zustand';
-import WorkerManager from '../../utils/WorkerManager';
-import { passthrough, RequestHandler } from 'msw';
-import { cloneHandlerWithResolver } from '../../utils/innerUtils';
+} from "../../zustand";
+import WorkerManager from "../../utils/WorkerManager";
+import { passthrough, RequestHandler } from "msw";
+import { cloneHandlerWithResolver } from "../../utils/innerUtils";
+import { defaultModalReoladProps } from "../modal/modalReloadProps";
 
 interface MockGuiProps {}
 
@@ -28,14 +23,18 @@ const MockGui: FC<MockGuiProps> = () => {
   // 목 on/off 상태관리
   const mockApiOnOffStore = useMockApiOnOffStore();
 
-  const [{ isOpenReloadModal }, setIsOpenReloadModal] = useState(
+  const [{ openModal: isOpenReloadModal }, setIsOpenReloadModal] = useState(
     defaultModalReoladProps
   );
 
   const onClickReLoadModal = () => {
-    setIsOpenReloadModal({
-      isop
-    });
+    setIsOpenReloadModal((prev) => ({
+      ...prev,
+      openModal: true,
+      handleConfirm: () => {
+        alert("hi");
+      },
+    }));
   };
 
   useEffect(() => {
@@ -76,7 +75,7 @@ const MockGui: FC<MockGuiProps> = () => {
           return handler;
         });
 
-        console.log('handler 재등록', handlers);
+        console.log("handler 재등록", handlers);
         worker.resetHandlers(...handlers);
       }
     }
@@ -136,7 +135,10 @@ const MockGui: FC<MockGuiProps> = () => {
         <ModalReload
           openModal={isOpenReloadModal}
           setOpenModal={(val) => {
-            setIsOpenReloadModal(val);
+            setIsOpenReloadModal((prev) => ({
+              ...prev,
+              openModal: val,
+            }));
           }}
         />
       </div>
