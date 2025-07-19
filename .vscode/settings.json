@@ -4,5 +4,6 @@
     "debug.useNodeFetcher": true
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "github.copilot.chat.localeOverride": "ko"
 }

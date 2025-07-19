@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "mock-gui": ["packages/mock-gui/src"]
+      "mock-gui": ["../packages/mock-gui/src"]
     },
     "target": "ES2020",
     "useDefineForClassFields": true,

@@ -1,17 +1,15 @@
 import { Modal, ModalBody, Progress } from "flowbite-react";
 import { useEffect, useRef, useState, type FC } from "react";
-import type { IProps } from "./modalReloadProps";
+import { useModalReload } from "../../zustand/useModalReload";
 
-const ModalReload: FC<IProps> = ({
-  openModal,
-  setOpenModal,
-  handleConfirm,
-}) => {
+const ModalReload: FC = () => {
   const refInterval = useRef<ReturnType<typeof setInterval> | null>(null);
   const [percentNum, setPercentNum] = useState(0);
 
+  const modalReloadStore = useModalReload();
+
   useEffect(() => {
-    if (openModal) {
+    if (modalReloadStore.isOpen) {
       refInterval.current = setInterval(() => {
         setPercentNum((prev) => {
           if (prev >= 100) {
@@ -32,25 +30,25 @@ const ModalReload: FC<IProps> = ({
         } // Cleanup on unmount
       };
     }
-  }, [openModal]);
+  }, [modalReloadStore.isOpen]);
 
   useEffect(() => {
     if (percentNum >= 100) {
-      handleConfirm?.();
+      modalReloadStore.handleConfirm();
       window.location.reload(); // Reload the page when percent reaches 100
     }
-  }, [percentNum, handleConfirm]);
+  }, [percentNum, modalReloadStore]);
 
   const onClose = () => {
     setPercentNum(0); // Reset percent when modal closes
     if (refInterval.current) {
       clearInterval(refInterval.current);
     } // Cleanup on unmount
-    setOpenModal?.(false);
+    modalReloadStore.clear();
   };
 
   return (
-    <Modal show={openModal} onClose={onClose} className="">
+    <Modal show={modalReloadStore.isOpen} onClose={onClose} className="">
       <ModalBody className="bg-black fixed bottom-2 right-0 text-white animate-slideDownGo px-6 py-3">
         <div className="flex items-center gap-5">
           <div>※</div>

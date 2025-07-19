@@ -1,10 +1,10 @@
-import '../../mock-gui/dist/mock-gui.css';
-import { MockGui, WorkerManager } from 'mock-gui';
-import { setupWorker } from 'msw/browser';
-import axios from 'axios';
-import { useState } from 'react';
-import { BOARD_LIST_URL } from './mock/apiUrl';
-import { handlers } from './mock/handlers';
+import "../../mock-gui/dist/mock-gui.css";
+import { MockGui, WorkerManager } from "mock-gui";
+import { setupWorker } from "msw/browser";
+import axios from "axios";
+import { useState } from "react";
+import { BOARD_LIST_URL } from "./mock/apiUrl";
+import { handlers } from "./mock/handlers";
 
 type Board = {
   id: number;
@@ -25,7 +25,7 @@ const App = () => {
       const data = response.data as Board[];
       setList(data);
     } catch (error) {
-      console.error('API 호출 실패:', error);
+      console.error("API 호출 실패:", error);
     }
   };
 

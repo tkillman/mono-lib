@@ -1,6 +1,10 @@
-import { http as mswHttp, HttpHandler } from 'msw';
-import type { MockCase } from '../domain/MockCase';
-import { useMockApiStore, type ApiInfo } from '../zustand';
+import { http as mswHttp, HttpHandler } from "msw";
+import type { MockCase } from "../domain/MockCase";
+import {
+  useMockApiOnOffStore,
+  useMockApiStore,
+  type ApiInfo,
+} from "../zustand";
 
 type PresetFunction = (
   apiTitle: string,
@@ -18,18 +22,18 @@ export const http = {
     const handler = mswHttp.get(url, resolver, options);
     const preset: PresetFunction = (apiTitle, ...mockCase) => {
       const setApi = useMockApiStore.getState().setApi;
-      //const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
+      const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
 
       const newApiInfo: ApiInfo = {
-        apiKey: `GET ${url}`,
-        method: 'GET',
+        apiKey: `GET_${url}`,
+        method: "GET",
         url: url,
         apiTitle,
         mockCase,
       };
 
       setApi(newApiInfo);
-      //setApiOnOff(newApiInfo.apiKey, false);
+      setApiOnOff(newApiInfo.apiKey, false);
 
       return handler;
     };
