@@ -4,12 +4,12 @@ import { create } from "zustand";
 export type ApiInfo = {
   apiKey: string; // GET_path 형태로 API를 구분하는 키
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"; // HTTP 메소드
-  url: string;
+  path: string;
   apiTitle: string;
   mockCase: Array<MockCase>;
 };
 
-type MockApi = {
+export type MockApi = {
   apiData: Record<string, ApiInfo>;
   setApi: (api: ApiInfo) => void;
 };

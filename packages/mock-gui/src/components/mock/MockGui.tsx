@@ -1,5 +1,5 @@
 import { useEffect, useState, type FC } from "react";
-import { Button, ToggleSwitch, TextInput, Select } from "flowbite-react";
+import { Button, ToggleSwitch, TextInput } from "flowbite-react";
 
 import ModalReload from "../modal/ModalReload";
 import {
@@ -11,6 +11,7 @@ import WorkerManager from "../../utils/WorkerManager";
 import { passthrough, RequestHandler } from "msw";
 import { cloneHandlerWithResolver } from "../../utils/innerUtils";
 import { useModalReload } from "../../zustand/useModalReload";
+import MockTable from "../table/MockTable";
 
 const MockGui: FC = () => {
   const [isWide, setIsWide] = useState<boolean>(false);
@@ -57,7 +58,6 @@ const MockGui: FC = () => {
       // API ON/OFF 에 따라 무력화
       if (Object.keys(mockApiOnOffStore.apiOnOff).length > 0) {
         const handlers = originHandlers.map((handler) => {
-          console.log("handler.info.header", handler.info);
           if (
             handler instanceof RequestHandler &&
             "method" in handler.info &&
@@ -84,7 +84,6 @@ const MockGui: FC = () => {
           return handler;
         });
 
-        console.log("handler 재등록", handlers);
         worker.resetHandlers(...handlers);
       }
     }
@@ -133,34 +132,14 @@ const MockGui: FC = () => {
                 }}
               />
             </div>
-            {Object.entries(apiData).map(([apiKey, apiInfo]) => {
-              return (
-                <div key={apiKey}>
-                  <div className="flex items-center gap-2">
-                    <div>
-                      <p>{apiInfo.apiTitle}</p>
-                      <p>{apiInfo.url}</p>
-                    </div>
-                    <ToggleSwitch
-                      checked={Boolean(
-                        mockApiOnOffStore.apiOnOff[apiInfo.apiKey]
-                      )}
-                      onChange={(checked) => {
-                        mockApiOnOffStore.setApiOnOff(apiInfo.apiKey, checked);
-                      }}
-                      disabled={!mockGuiStore.isAllOn}
-                    />
-                    <Select>
-                      {apiInfo.mockCase.map((mockCase, index) => (
-                        <option key={index} value={mockCase.label}>
-                          {mockCase.label}
-                        </option>
-                      ))}
-                    </Select>
-                  </div>
-                </div>
-              );
-            })}
+            <MockTable
+              isAllOn={mockGuiStore.isAllOn}
+              apiData={apiData}
+              apiOnOff={mockApiOnOffStore.apiOnOff}
+              onChangeApiOnOff={(apiKey) => (checked) => {
+                mockApiOnOffStore.setApiOnOff(apiKey, checked);
+              }}
+            ></MockTable>
           </div>
         </div>
       </div>

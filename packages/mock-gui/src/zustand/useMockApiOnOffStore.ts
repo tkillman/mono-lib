@@ -2,7 +2,7 @@ import { produce } from "immer";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-type MockApiOnOffStore = {
+export type MockApiOnOffStore = {
   apiOnOff: Record<string, boolean>; // apiKey를 키로 사용하여 on/off 상태를 저장
   setApiOnOff: (apiKey: string, isOn: boolean) => void;
   setApiAllOnOff: (isOn: boolean) => void;
