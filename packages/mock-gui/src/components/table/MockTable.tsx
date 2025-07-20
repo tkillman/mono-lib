@@ -26,17 +26,19 @@ const MockTable: FC<IProps> = ({
   apiOnOff,
   onChangeApiOnOff,
 }) => {
+  const thClasses = "bg-transparent";
+
   return (
     <div className="overflow-x-auto text-white">
       <Table>
         <TableHead>
           <TableRow className="border-b-[1px] border-white text-white">
-            <TableHeadCell className="bg-transparent">METHOD</TableHeadCell>
-            <TableHeadCell className="bg-transparent">PATH</TableHeadCell>
-            <TableHeadCell className="bg-transparent">STATUS</TableHeadCell>
-            <TableHeadCell className="bg-transparent">RESPONSE</TableHeadCell>
-            <TableHeadCell className="bg-transparent">DELAY</TableHeadCell>
-            <TableHeadCell className="bg-transparent">OPTIONS</TableHeadCell>
+            <TableHeadCell className={thClasses}>METHOD</TableHeadCell>
+            <TableHeadCell className={thClasses}>PATH</TableHeadCell>
+            <TableHeadCell className={thClasses}>STATUS</TableHeadCell>
+            <TableHeadCell className={thClasses}>RESPONSE</TableHeadCell>
+            <TableHeadCell className={thClasses}>DELAY</TableHeadCell>
+            <TableHeadCell className={thClasses}>OPTIONS</TableHeadCell>
           </TableRow>
         </TableHead>
         <TableBody className="divide-y">

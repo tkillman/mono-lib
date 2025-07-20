@@ -12,6 +12,7 @@ export type ApiInfo = {
 export type MockApi = {
   apiData: Record<string, ApiInfo>;
   setApi: (api: ApiInfo) => void;
+  clear: () => void;
 };
 
 export const useMockApiStore = create<MockApi>((set) => {
@@ -23,6 +24,9 @@ export const useMockApiStore = create<MockApi>((set) => {
         newApiData[api.apiKey] = api; // apiKey를 키로 사용하여 api 정보를 저장
         return { apiData: newApiData };
       });
+    },
+    clear: () => {
+      set({ apiData: {} }); // apiData를 초기화
     },
   };
 });

@@ -6,6 +6,7 @@ export type MockApiOnOffStore = {
   apiOnOff: Record<string, boolean>; // apiKey를 키로 사용하여 on/off 상태를 저장
   setApiOnOff: (apiKey: string, isOn: boolean) => void;
   setApiAllOnOff: (isOn: boolean) => void;
+  clear: () => void;
 };
 
 export const useMockApiOnOffStore = create<MockApiOnOffStore>()(
@@ -13,12 +14,14 @@ export const useMockApiOnOffStore = create<MockApiOnOffStore>()(
     (set) => ({
       apiOnOff: {},
       setApiOnOff: (apiKey, isOn) => {
-        set((state) => ({
-          apiOnOff: {
-            ...state.apiOnOff,
-            [apiKey]: isOn, // apiKey를 키로 사용하여 상태 업데이트
-          },
-        }));
+        set((state) => {
+          return {
+            apiOnOff: {
+              ...state.apiOnOff,
+              [apiKey]: isOn, // apiKey를 키로 사용하여 상태 업데이트
+            },
+          };
+        });
       },
       setApiAllOnOff: (isOn) => {
         set((state) => {
@@ -29,6 +32,9 @@ export const useMockApiOnOffStore = create<MockApiOnOffStore>()(
           });
           return newApiOnOff;
         });
+      },
+      clear: () => {
+        set({ apiOnOff: {} }); // apiOnOff 상태를 초기화
       },
     }),
     {

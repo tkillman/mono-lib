@@ -20,7 +20,7 @@ const MockGui: FC = () => {
   const mockGuiStore = useMockGuiStore((state) => state);
 
   // 목 api 목록 상태관리
-  const apiData = useMockApiStore((state) => state.apiData);
+  const { apiData, clear: clearApiData } = useMockApiStore();
 
   // 목 on/off 상태관리
   const mockApiOnOffStore = useMockApiOnOffStore();
@@ -30,6 +30,8 @@ const MockGui: FC = () => {
   const onClickReLoadModal = () => {
     const handleConfirm = () => {
       mockGuiStore.clear();
+      clearApiData();
+      mockApiOnOffStore.clear();
     };
 
     setOpenModal({
@@ -119,7 +121,7 @@ const MockGui: FC = () => {
               닫기
             </Button>
           </div>
-          <div className="max-h-72 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto">
             <div className="flex gap-4 items-center sticky top-0 z-10 bg-gray-700 py-6">
               <TextInput placeholder="API 목록검색 (예시 : GET /api/v1/users)"></TextInput>
               <Button type="button" onClick={onClickReLoadModal}>
@@ -128,7 +130,11 @@ const MockGui: FC = () => {
               <ToggleSwitch
                 checked={mockGuiStore.isAllOn}
                 onChange={(checked) => {
-                  mockGuiStore.setIsAllOn(checked);
+                  setOpenModal({
+                    handleConfirm: () => {
+                      mockGuiStore.setIsAllOn(checked);
+                    },
+                  });
                 }}
               />
             </div>
@@ -137,7 +143,11 @@ const MockGui: FC = () => {
               apiData={apiData}
               apiOnOff={mockApiOnOffStore.apiOnOff}
               onChangeApiOnOff={(apiKey) => (checked) => {
-                mockApiOnOffStore.setApiOnOff(apiKey, checked);
+                setOpenModal({
+                  handleConfirm: () => {
+                    mockApiOnOffStore.setApiOnOff(apiKey, checked);
+                  },
+                });
               }}
             ></MockTable>
           </div>

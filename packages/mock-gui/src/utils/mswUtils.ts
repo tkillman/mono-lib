@@ -22,7 +22,7 @@ export const http = {
     const handler = mswHttp.get(path, resolver, options);
     const preset: PresetFunction = (apiTitle, ...mockCase) => {
       const setApi = useMockApiStore.getState().setApi;
-      const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
+      //const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
 
       const newApiInfo: ApiInfo = {
         apiKey: `GET_${path}`,
@@ -33,7 +33,7 @@ export const http = {
       };
 
       setApi(newApiInfo);
-      setApiOnOff(newApiInfo.apiKey, false);
+      //setApiOnOff(newApiInfo.apiKey, false);
 
       return handler;
     };
@@ -48,7 +48,7 @@ export const http = {
     const handler = mswHttp.post(path, resolver, options);
     const preset: PresetFunction = (apiTitle, ...mockCase) => {
       const setApi = useMockApiStore.getState().setApi;
-      const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
+      //const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
 
       const newApiInfo: ApiInfo = {
         apiKey: `POST_${path}`,
@@ -59,7 +59,7 @@ export const http = {
       };
 
       setApi(newApiInfo);
-      setApiOnOff(newApiInfo.apiKey, false);
+      //setApiOnOff(newApiInfo.apiKey, false);
 
       return handler;
     };
@@ -74,7 +74,7 @@ export const http = {
     const handler = mswHttp.put(path, resolver, options);
     const preset: PresetFunction = (apiTitle, ...mockCase) => {
       const setApi = useMockApiStore.getState().setApi;
-      const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
+      //const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
 
       const newApiInfo: ApiInfo = {
         apiKey: `PUT_${path}`,
@@ -85,7 +85,7 @@ export const http = {
       };
 
       setApi(newApiInfo);
-      setApiOnOff(newApiInfo.apiKey, false);
+      //setApiOnOff(newApiInfo.apiKey, false);
 
       return handler;
     };
@@ -100,7 +100,7 @@ export const http = {
     const handler = mswHttp.patch(path, resolver, options);
     const preset: PresetFunction = (apiTitle, ...mockCase) => {
       const setApi = useMockApiStore.getState().setApi;
-      const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
+      //const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
 
       const newApiInfo: ApiInfo = {
         apiKey: `PATCH_${path}`,
@@ -111,7 +111,7 @@ export const http = {
       };
 
       setApi(newApiInfo);
-      setApiOnOff(newApiInfo.apiKey, false);
+      //setApiOnOff(newApiInfo.apiKey, false);
 
       return handler;
     };
@@ -126,7 +126,7 @@ export const http = {
     const handler = mswHttp.delete(path, resolver, options);
     const preset: PresetFunction = (apiTitle, ...mockCase) => {
       const setApi = useMockApiStore.getState().setApi;
-      const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
+      //const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;
 
       const newApiInfo: ApiInfo = {
         apiKey: `DELETE_${path}`,
@@ -137,7 +137,7 @@ export const http = {
       };
 
       setApi(newApiInfo);
-      setApiOnOff(newApiInfo.apiKey, false);
+      //setApiOnOff(newApiInfo.apiKey, false);
 
       return handler;
     };
