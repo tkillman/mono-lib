@@ -35,7 +35,7 @@ export const handlers = [
     .flatMap((_, index) => [
       // POST 요청
       http
-        .post(`${BOARD_LIST_URL}/${index}`, () => {
+        .post(`${BOARD_LIST_URL}${index === 0 ? "" : index}`, () => {
           return HttpResponse.json({ message: `POST created ${index}` });
         })
         .preset(
@@ -54,7 +54,7 @@ export const handlers = [
 
       // PUT 요청
       http
-        .put(`${BOARD_LIST_URL}/${index}`, () => {
+        .put(`${BOARD_LIST_URL}/${index + 1}`, () => {
           return HttpResponse.json({ message: `PUT updated ${index}` });
         })
         .preset(
@@ -73,7 +73,7 @@ export const handlers = [
 
       // DELETE 요청
       http
-        .delete(`${BOARD_LIST_URL}/${index}`, () => {
+        .delete(`${BOARD_LIST_URL}/${index + 1}`, () => {
           return HttpResponse.json({ message: `DELETE success ${index}` });
         })
         .preset(

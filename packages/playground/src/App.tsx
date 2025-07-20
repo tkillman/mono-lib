@@ -1,53 +1,97 @@
 import "../../mock-gui/dist/mock-gui.css";
 import { MockGui, WorkerManager } from "mock-gui";
 import { setupWorker } from "msw/browser";
-import axios from "axios";
+import axios, { type AxiosResponse } from "axios";
 import { useState } from "react";
 import { BOARD_LIST_URL } from "./mock/apiUrl";
 import { handlers } from "./mock/handlers";
-
-type Board = {
-  id: number;
-  title: string;
-};
 
 const App = () => {
   const worker = setupWorker();
   worker.use(...handlers);
   WorkerManager.getInstance().initializeWorker(worker);
 
-  const [list, setList] = useState<Board[]>([]);
+  const [data, setData] = useState<AxiosResponse<any> | undefined>(undefined);
 
   const onClickApi = async () => {
-    //jsonplaceholder
+    //get 호출
     try {
       const response = await axios.get(BOARD_LIST_URL);
-      const data = response.data as Board[];
-      setList(data);
+      const data = response.data;
+      setData(data);
     } catch (error) {
-      console.error("API 호출 실패:", error);
+      console.error("GET API 호출 실패:", error);
+    }
+  };
+
+  const onClickApi2 = async () => {
+    // post 호출
+    try {
+      const response = await axios.post(BOARD_LIST_URL);
+      const data = response.data;
+      setData(data);
+    } catch (error) {
+      console.error("POST API 호출 실패:", error);
+    }
+  };
+
+  const onClickApi3 = async () => {
+    // put 호출
+    try {
+      const response = await axios.put(`${BOARD_LIST_URL}/1`);
+      const data = response.data;
+      setData(data);
+    } catch (error) {
+      console.error("PUT API 호출 실패:", error);
+    }
+  };
+
+  const onClickApi4 = async () => {
+    // post 호출
+    try {
+      const response = await axios.delete(`${BOARD_LIST_URL}/1`);
+      const data = response.data;
+      setData(data);
+    } catch (error) {
+      console.error("DELETE API 호출 실패:", error);
     }
   };
 
   return (
-    <div className="w-screen h-screen">
+    <div>
       <h1>Playground</h1>
-      <div className="flex flex-col">
+      <div style={{ display: "flex", gap: "10px" }}>
         <button
           type="button"
           onClick={onClickApi}
-          className="bg-amber-300 p-1 rounded"
+          style={{ width: "130px", backgroundColor: "red" }}
         >
-          api 호출
+          get api 호출
+        </button>
+        <button
+          type="button"
+          onClick={onClickApi2}
+          style={{ width: "130px", backgroundColor: "orange" }}
+        >
+          post api 호출
+        </button>
+        <button
+          type="button"
+          onClick={onClickApi3}
+          style={{ width: "130px", backgroundColor: "yellow" }}
+        >
+          put api 호출
+        </button>
+        <button
+          type="button"
+          onClick={onClickApi4}
+          style={{ width: "130px", backgroundColor: "green" }}
+        >
+          delete api 호출
         </button>
       </div>
       <div>
-        <div>
-          <strong>api 결과</strong>
-        </div>
-        {list.map((r) => {
-          return <div key={r.id}>{r.title}</div>;
-        })}
+        <div>{JSON.stringify(data)}</div>
       </div>
       <MockGui />
     </div>
