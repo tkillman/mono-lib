@@ -9,6 +9,7 @@ import {
 } from "../../zustand";
 import WorkerManager from "../../utils/WorkerManager";
 import {
+  delay,
   HttpResponse,
   passthrough,
   RequestHandler,
@@ -32,15 +33,21 @@ const MockGui: FC = () => {
   const mockApiOnOffStore = useMockApiOnOffStore();
 
   // selectbox 상태관리
-  const { getSelectedApi, setSelectedApi } = useMockSelectStore();
+  const {
+    selectedApi,
+    setSelectedApi,
+    clear: clearSelectedApi,
+  } = useMockSelectStore();
 
   const setOpenModal = useModalReload((state) => state.setOpenModal);
 
+  /** 설정 초기화 모달 오픈 */
   const onClickReLoadModal = () => {
     const handleConfirm = () => {
       mockGuiStore.clear();
       clearApiData();
       mockApiOnOffStore.clear();
+      clearSelectedApi();
     };
 
     setOpenModal({
@@ -53,10 +60,8 @@ const MockGui: FC = () => {
     const manager = WorkerManager.getInstance();
     if (mockGuiStore.isAllOn) {
       manager.start();
-      //mockApiOnOffStore.setApiAllOnOff(true);
     } else {
       manager.stop();
-      //mockApiOnOffStore.setApiAllOnOff(false);
     }
   }, [mockGuiStore.isAllOn, mockApiOnOffStore]);
 
@@ -67,54 +72,58 @@ const MockGui: FC = () => {
 
     if (worker) {
       // API ON/OFF 에 따라 무력화
-      if (Object.keys(mockApiOnOffStore.apiOnOff).length > 0) {
-        const handlers = originHandlers.map((handler) => {
-          if (
-            handler instanceof RequestHandler &&
-            "method" in handler.info &&
-            "path" in handler.info
-          ) {
-            const apiKey = `${handler.info.method}_${handler.info.path}`;
-            const isOn = Boolean(mockApiOnOffStore.apiOnOff[apiKey]);
 
-            if (isOn && mockGuiStore.isAllOn) {
-              const mockCases = apiData[apiKey]?.mockCase;
-              const selectedLabel = getSelectedApi(apiKey);
-              const selectedMockCase = mockCases?.find(
-                (mockCase) => mockCase.label === selectedLabel
-              );
+      const handlers = originHandlers.map((handler) => {
+        if (
+          handler instanceof RequestHandler &&
+          "method" in handler.info &&
+          "path" in handler.info
+        ) {
+          const apiKey = `${handler.info.method}_${handler.info.path}`;
+          const isOn = Boolean(mockApiOnOffStore.apiOnOff[apiKey]);
 
-              if (!selectedMockCase) {
-                return handler; // 선택된 mock case가 없으면 원래 핸들러 반환
-              }
+          if (isOn && mockGuiStore.isAllOn) {
+            const mockCases = apiData[apiKey]?.mockCase;
+            const selectedLabel = selectedApi[apiKey];
 
-              const seldctedResolver: ResponseResolver = () => {
-                return HttpResponse.json(selectedMockCase.response, {
-                  status: selectedMockCase.status,
-                });
-              };
+            // 없으면 첫번째 mockCase를 선택
+            const selectedMockCase =
+              mockCases?.find((mockCase) => mockCase.label === selectedLabel) ||
+              mockCases?.[0];
 
-              const selectedMockCaseHandler: RequestHandler =
-                cloneHandlerWithResolver(handler, seldctedResolver);
-
-              return selectedMockCaseHandler;
-            } else {
-              const convertHandler: RequestHandler = cloneHandlerWithResolver(
-                handler,
-                () => passthrough()
-              );
-
-              return convertHandler;
+            if (!selectedMockCase) {
+              return handler; // 선택된 mock case가 없으면 원래 핸들러 반환
             }
+
+            const seldctedResolver: ResponseResolver = async () => {
+              if (selectedMockCase.delay) {
+                await delay(selectedMockCase.delay);
+              }
+              return HttpResponse.json(selectedMockCase.response, {
+                status: selectedMockCase.status,
+              });
+            };
+
+            const selectedMockCaseHandler: RequestHandler =
+              cloneHandlerWithResolver(handler, seldctedResolver);
+
+            return selectedMockCaseHandler;
+          } else {
+            const convertHandler: RequestHandler = cloneHandlerWithResolver(
+              handler,
+              () => passthrough()
+            );
+
+            return convertHandler;
           }
+        }
 
-          return handler;
-        });
+        return handler;
+      });
 
-        worker.resetHandlers(...handlers);
-      }
+      worker.resetHandlers(...handlers);
     }
-  }, [mockApiOnOffStore, mockGuiStore.isAllOn, apiData, getSelectedApi]);
+  }, [mockApiOnOffStore, mockGuiStore.isAllOn, apiData, selectedApi]);
 
   return (
     <div className="fixed bottom-0 right-0">
@@ -157,6 +166,11 @@ const MockGui: FC = () => {
                 onChange={(checked) => {
                   setOpenModal({
                     handleConfirm: () => {
+                      if (checked) {
+                        for (const key in apiData) {
+                          mockApiOnOffStore.setApiOnOff(key, true);
+                        }
+                      }
                       mockGuiStore.setIsAllOn(checked);
                     },
                   });

@@ -8,7 +8,7 @@ export const handlers = [
       return HttpResponse.json([
         {
           id: "100",
-          title: "mock list 1",
+          title: "preset list 1",
         },
       ]);
     })
@@ -17,6 +17,7 @@ export const handlers = [
       {
         label: "기본 mock",
         status: 200,
+        delay: 3000,
         response: [
           {
             id: "100",
@@ -51,7 +52,6 @@ export const handlers = [
             response: { error: `POST invalid data ${index}` },
           }
         ),
-
       // PUT 요청
       http
         .put(`${BOARD_LIST_URL}/${index + 1}`, () => {

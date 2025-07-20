@@ -20,6 +20,7 @@ export const http = {
     options?: Parameters<typeof mswHttp.get>[2]
   ): HttpHandler & { preset: PresetFunction } => {
     const handler = mswHttp.get(path, resolver, options);
+
     const preset: PresetFunction = (apiTitle, ...mockCase) => {
       const setApi = useMockApiStore.getState().setApi;
       //const setApiOnOff = useMockApiOnOffStore.getState().setApiOnOff;

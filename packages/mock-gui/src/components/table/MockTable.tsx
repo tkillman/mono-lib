@@ -1,7 +1,9 @@
 import type { FC } from "react";
 import type { MockApi } from "../../zustand/useMockApiStore";
 import {
-  Select,
+  Dropdown,
+  DropdownHeader,
+  DropdownItem,
   Table,
   TableBody,
   TableCell,
@@ -13,6 +15,7 @@ import {
 import type { MockApiOnOffStore } from "../../zustand/useMockApiOnOffStore";
 import MethodSpan from "../span/MethodSpan";
 import { useMockSelectStore } from "../../zustand/useMockSelectStore";
+import AngleDown from "../svg/AngleDown";
 
 interface IProps {
   isAllOn: boolean;
@@ -47,33 +50,71 @@ const MockTable: FC<IProps> = ({
         </TableHead>
         <TableBody className="divide-y">
           {Object.entries(apiData).map(([apiKey, apiInfo]) => {
+            const isChecked = Boolean(apiOnOff[apiInfo.apiKey]);
+
+            const mockCases = apiData[apiKey]?.mockCase;
+            const selectedLabel = selectedApi[apiKey];
+
+            const selectedMockCase =
+              mockCases?.find((mockCase) => mockCase.label === selectedLabel) ||
+              mockCases?.[0];
+
             return (
               <TableRow key={apiKey}>
                 <TableCell>
                   <MethodSpan methodName={apiInfo.method} />
                 </TableCell>
                 <TableCell>
-                  <div>{apiInfo.path}</div>
+                  <p className="text-white">{apiInfo.path}</p>
+                  <p className="text-white font-semibold">{apiInfo.apiTitle}</p>
                 </TableCell>
-                <TableCell>STATS 채우기</TableCell>
+                <TableCell>{selectedMockCase?.status || 200}</TableCell>
                 <TableCell>
-                  <Select
-                    value={selectedApi[apiKey]}
-                    onChange={(e) => {
-                      onChangeSelect(apiKey, e.target.value);
-                    }}
+                  <Dropdown
+                    label={
+                      <div className="flex items-center justify-between min-w-[150px] max-w-[150px]">
+                        <span className="truncate overflow-hidden whitespace-nowrap">
+                          {selectedMockCase.label}
+                        </span>
+                        <span className="ml-2 text-[12px] text-gray-400 min-w-[30px]">
+                          ({mockCases?.length || 0}개)
+                        </span>
+                      </div>
+                    }
+                    placement="top"
+                    disabled={!isChecked}
                   >
-                    {apiInfo.mockCase.map((mockCase, index) => (
-                      <option key={index} value={mockCase.label}>
-                        {mockCase.label}
-                      </option>
-                    ))}
-                  </Select>
+                    <DropdownHeader>
+                      <span className="font-bold text-[16px]">
+                        Mock Preset ({mockCases?.length || 0})
+                      </span>
+                    </DropdownHeader>
+
+                    {mockCases?.map((mockCase, index) => {
+                      const isSelected = selectedApi[apiKey] === mockCase.label;
+
+                      return (
+                        <DropdownItem
+                          key={index}
+                          onClick={() => {
+                            if (isSelected) {
+                              return; // 이미 선택된 경우 아무 동작도 하지 않음
+                            }
+                            onChangeSelect(apiKey, mockCase.label);
+                          }}
+                          className="justify-between"
+                        >
+                          {isSelected ? <AngleDown /> : <div></div>}
+                          {mockCase.label}
+                        </DropdownItem>
+                      );
+                    })}
+                  </Dropdown>
                 </TableCell>
-                <TableCell>DELAY 채우기</TableCell>
+                <TableCell>{selectedMockCase.delay}</TableCell>
                 <TableCell>
                   <ToggleSwitch
-                    checked={Boolean(apiOnOff[apiInfo.apiKey])}
+                    checked={isChecked}
                     onChange={onChangeApiOnOff(apiInfo.apiKey)}
                     disabled={!isAllOn}
                   />

@@ -1,6 +1,7 @@
 export type MockCase = {
   label: string;
   status: number;
+  delay?: number;
   response:
     | string
     | number
