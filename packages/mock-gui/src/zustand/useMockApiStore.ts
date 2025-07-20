@@ -1,9 +1,10 @@
+import type { API_METHOD } from "../domain/API_METHOD.domain";
 import type { MockCase } from "../domain/MockCase";
 import { create } from "zustand";
 
 export type ApiInfo = {
   apiKey: string; // GET_path 형태로 API를 구분하는 키
-  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH"; // HTTP 메소드
+  method: API_METHOD; // HTTP 메소드
   path: string;
   apiTitle: string;
   mockCase: Array<MockCase>;

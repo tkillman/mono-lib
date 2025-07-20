@@ -1,5 +1,5 @@
 import { useEffect, useState, type FC } from "react";
-import { Button, ToggleSwitch, TextInput } from "flowbite-react";
+import { Button } from "flowbite-react";
 
 import ModalReload from "../modal/ModalReload";
 import {
@@ -19,6 +19,8 @@ import { cloneHandlerWithResolver } from "../../utils/innerUtils";
 import { useModalReload } from "../../zustand/useModalReload";
 import MockTable from "../table/MockTable";
 import { useMockSelectStore } from "../../zustand/useMockSelectStore";
+import SearchView from "../../views/SearchView";
+import { useSearchStore } from "../../zustand/useSearchStore";
 
 const MockGui: FC = () => {
   const [isWide, setIsWide] = useState<boolean>(false);
@@ -31,6 +33,9 @@ const MockGui: FC = () => {
 
   // 목 on/off 상태관리
   const mockApiOnOffStore = useMockApiOnOffStore();
+
+  // 검색
+  const { searchMethod, setSearchMethod } = useSearchStore();
 
   // selectbox 상태관리
   const {
@@ -139,8 +144,14 @@ const MockGui: FC = () => {
         </div>
       </div>
       {/** isShowMode ON */}
-      <div className={isWide ? "bg-gray-700 shadow-md text-white" : "hidden"}>
-        <div className="border-2 border-yellow-600 rounded-lg flex flex-col p-4 gap-4">
+      <div
+        className={
+          isWide
+            ? "bg-gray-700 shadow-md text-white overflow-x-auto w-[80vw]"
+            : "hidden"
+        }
+      >
+        <div className="border-2 border-gray-700 rounded-lg flex flex-col p-4 gap-4 min-w-[1140px]">
           <div className="flex justify-between gap-4">
             <span>KIM-GIU</span>
             <div>
@@ -155,15 +166,11 @@ const MockGui: FC = () => {
               닫기
             </Button>
           </div>
-          <div className="max-h-96 overflow-y-auto">
-            <div className="flex gap-4 items-center sticky top-0 z-10 bg-gray-700 py-6">
-              <TextInput placeholder="API 목록검색 (예시 : GET /api/v1/users)"></TextInput>
-              <Button type="button" onClick={onClickReLoadModal}>
-                설정 초기화
-              </Button>
-              <ToggleSwitch
-                checked={mockGuiStore.isAllOn}
-                onChange={(checked) => {
+          <div className="min-h-96 max-h-96 overflow-y-auto">
+            <div className="sticky top-0 z-10 bg-gray-700 py-6 px-3">
+              <SearchView
+                isAllOn={mockGuiStore.isAllOn}
+                onChangeAllOn={(checked) => {
                   setOpenModal({
                     handleConfirm: () => {
                       if (checked) {
@@ -174,6 +181,11 @@ const MockGui: FC = () => {
                       mockGuiStore.setIsAllOn(checked);
                     },
                   });
+                }}
+                onClickInit={onClickReLoadModal}
+                searchMethod={searchMethod}
+                onClickSearchMethod={(method) => () => {
+                  setSearchMethod(method);
                 }}
               />
             </div>
@@ -195,6 +207,7 @@ const MockGui: FC = () => {
                   },
                 });
               }}
+              searchMethod={searchMethod}
             />
           </div>
         </div>

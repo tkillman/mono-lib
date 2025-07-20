@@ -16,6 +16,7 @@ import type { MockApiOnOffStore } from "../../zustand/useMockApiOnOffStore";
 import MethodSpan from "../span/MethodSpan";
 import { useMockSelectStore } from "../../zustand/useMockSelectStore";
 import AngleDown from "../svg/AngleDown";
+import type { SELECT_API_METHOD } from "src/domain/API_METHOD.domain";
 
 interface IProps {
   isAllOn: boolean;
@@ -23,6 +24,7 @@ interface IProps {
   apiOnOff: MockApiOnOffStore["apiOnOff"];
   onChangeApiOnOff: (apiKey: string) => (checked: boolean) => void;
   onChangeSelect: (apiKey: string, label: string) => void;
+  searchMethod: SELECT_API_METHOD;
 }
 
 const MockTable: FC<IProps> = ({
@@ -31,6 +33,7 @@ const MockTable: FC<IProps> = ({
   apiOnOff,
   onChangeApiOnOff,
   onChangeSelect,
+  searchMethod,
 }) => {
   const thClasses = "bg-transparent";
   const selectedApi = useMockSelectStore((state) => state.selectedApi);
@@ -58,6 +61,10 @@ const MockTable: FC<IProps> = ({
             const selectedMockCase =
               mockCases?.find((mockCase) => mockCase.label === selectedLabel) ||
               mockCases?.[0];
+
+            if (searchMethod !== "ALL" && apiInfo.method !== searchMethod) {
+              return null; // 검색된 메소드와 일치하지 않는 경우 렌더링하지 않음
+            }
 
             return (
               <TableRow key={apiKey}>

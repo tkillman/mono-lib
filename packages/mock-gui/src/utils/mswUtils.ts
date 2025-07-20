@@ -5,6 +5,7 @@ import {
   useMockApiStore,
   type ApiInfo,
 } from "../zustand";
+import { API_METHOD } from "../domain/API_METHOD.domain";
 
 type PresetFunction = (
   apiTitle: string,
@@ -27,7 +28,7 @@ export const http = {
 
       const newApiInfo: ApiInfo = {
         apiKey: `GET_${path}`,
-        method: "GET",
+        method: API_METHOD.GET,
         path: path,
         apiTitle,
         mockCase,
@@ -53,7 +54,7 @@ export const http = {
 
       const newApiInfo: ApiInfo = {
         apiKey: `POST_${path}`,
-        method: "POST",
+        method: API_METHOD.POST,
         path: path,
         apiTitle,
         mockCase,
@@ -79,7 +80,7 @@ export const http = {
 
       const newApiInfo: ApiInfo = {
         apiKey: `PUT_${path}`,
-        method: "PUT",
+        method: API_METHOD.PUT,
         path: path,
         apiTitle,
         mockCase,
@@ -105,7 +106,7 @@ export const http = {
 
       const newApiInfo: ApiInfo = {
         apiKey: `PATCH_${path}`,
-        method: "PATCH",
+        method: API_METHOD.PATCH,
         path: path,
         apiTitle,
         mockCase,
@@ -131,7 +132,7 @@ export const http = {
 
       const newApiInfo: ApiInfo = {
         apiKey: `DELETE_${path}`,
-        method: "DELETE",
+        method: API_METHOD.DELETE,
         path: path,
         apiTitle,
         mockCase,
