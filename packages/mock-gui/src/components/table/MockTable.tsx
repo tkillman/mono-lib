@@ -12,12 +12,14 @@ import {
 } from "flowbite-react";
 import type { MockApiOnOffStore } from "../../zustand/useMockApiOnOffStore";
 import MethodSpan from "../span/MethodSpan";
+import { useMockSelectStore } from "../../zustand/useMockSelectStore";
 
 interface IProps {
   isAllOn: boolean;
   apiData: MockApi["apiData"];
   apiOnOff: MockApiOnOffStore["apiOnOff"];
   onChangeApiOnOff: (apiKey: string) => (checked: boolean) => void;
+  onChangeSelect: (apiKey: string, label: string) => void;
 }
 
 const MockTable: FC<IProps> = ({
@@ -25,8 +27,10 @@ const MockTable: FC<IProps> = ({
   apiData,
   apiOnOff,
   onChangeApiOnOff,
+  onChangeSelect,
 }) => {
   const thClasses = "bg-transparent";
+  const selectedApi = useMockSelectStore((state) => state.selectedApi);
 
   return (
     <div className="overflow-x-auto text-white">
@@ -53,7 +57,12 @@ const MockTable: FC<IProps> = ({
                 </TableCell>
                 <TableCell>STATS 채우기</TableCell>
                 <TableCell>
-                  <Select>
+                  <Select
+                    value={selectedApi[apiKey]}
+                    onChange={(e) => {
+                      onChangeSelect(apiKey, e.target.value);
+                    }}
+                  >
                     {apiInfo.mockCase.map((mockCase, index) => (
                       <option key={index} value={mockCase.label}>
                         {mockCase.label}

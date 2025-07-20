@@ -8,10 +8,16 @@ import {
   useMockApiOnOffStore,
 } from "../../zustand";
 import WorkerManager from "../../utils/WorkerManager";
-import { passthrough, RequestHandler } from "msw";
+import {
+  HttpResponse,
+  passthrough,
+  RequestHandler,
+  type ResponseResolver,
+} from "msw";
 import { cloneHandlerWithResolver } from "../../utils/innerUtils";
 import { useModalReload } from "../../zustand/useModalReload";
 import MockTable from "../table/MockTable";
+import { useMockSelectStore } from "../../zustand/useMockSelectStore";
 
 const MockGui: FC = () => {
   const [isWide, setIsWide] = useState<boolean>(false);
@@ -24,6 +30,9 @@ const MockGui: FC = () => {
 
   // 목 on/off 상태관리
   const mockApiOnOffStore = useMockApiOnOffStore();
+
+  // selectbox 상태관리
+  const { getSelectedApi, setSelectedApi } = useMockSelectStore();
 
   const setOpenModal = useModalReload((state) => state.setOpenModal);
 
@@ -65,14 +74,30 @@ const MockGui: FC = () => {
             "method" in handler.info &&
             "path" in handler.info
           ) {
-            const isOn = Boolean(
-              mockApiOnOffStore.apiOnOff[
-                `${handler.info.method}_${handler.info.path}`
-              ]
-            );
+            const apiKey = `${handler.info.method}_${handler.info.path}`;
+            const isOn = Boolean(mockApiOnOffStore.apiOnOff[apiKey]);
 
             if (isOn && mockGuiStore.isAllOn) {
-              return handler;
+              const mockCases = apiData[apiKey]?.mockCase;
+              const selectedLabel = getSelectedApi(apiKey);
+              const selectedMockCase = mockCases?.find(
+                (mockCase) => mockCase.label === selectedLabel
+              );
+
+              if (!selectedMockCase) {
+                return handler; // 선택된 mock case가 없으면 원래 핸들러 반환
+              }
+
+              const seldctedResolver: ResponseResolver = () => {
+                return HttpResponse.json(selectedMockCase.response, {
+                  status: selectedMockCase.status,
+                });
+              };
+
+              const selectedMockCaseHandler: RequestHandler =
+                cloneHandlerWithResolver(handler, seldctedResolver);
+
+              return selectedMockCaseHandler;
             } else {
               const convertHandler: RequestHandler = cloneHandlerWithResolver(
                 handler,
@@ -89,7 +114,7 @@ const MockGui: FC = () => {
         worker.resetHandlers(...handlers);
       }
     }
-  }, [mockApiOnOffStore, mockGuiStore.isAllOn]);
+  }, [mockApiOnOffStore, mockGuiStore.isAllOn, apiData, getSelectedApi]);
 
   return (
     <div className="fixed bottom-0 right-0">
@@ -149,7 +174,14 @@ const MockGui: FC = () => {
                   },
                 });
               }}
-            ></MockTable>
+              onChangeSelect={(apiKey, label) => {
+                setOpenModal({
+                  handleConfirm: () => {
+                    setSelectedApi(apiKey, label);
+                  },
+                });
+              }}
+            />
           </div>
         </div>
       </div>

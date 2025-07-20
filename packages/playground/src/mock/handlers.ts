@@ -26,7 +26,7 @@ export const handlers = [
       },
       {
         label: "두번째",
-        status: 400,
+        status: 200,
         response: [{ id: "200", title: "두번째 mock" }],
       }
     ),

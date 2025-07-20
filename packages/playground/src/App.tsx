@@ -21,6 +21,10 @@ const App = () => {
       setData(data);
     } catch (error) {
       console.error("GET API 호출 실패:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.message);
+        setData(error?.response?.data);
+      }
     }
   };
 
@@ -32,6 +36,10 @@ const App = () => {
       setData(data);
     } catch (error) {
       console.error("POST API 호출 실패:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.message);
+        setData(error?.response?.data);
+      }
     }
   };
 
@@ -43,6 +51,10 @@ const App = () => {
       setData(data);
     } catch (error) {
       console.error("PUT API 호출 실패:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.message);
+        setData(error?.response?.data);
+      }
     }
   };
 
@@ -54,6 +66,10 @@ const App = () => {
       setData(data);
     } catch (error) {
       console.error("DELETE API 호출 실패:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error:", error.message);
+        setData(error?.response?.data);
+      }
     }
   };
 
